@@ -60,10 +60,10 @@ function get_proof (items, target_item, hash_function, proof = [])
 		hash	= hash_function(concat(item1, item2))
 		tree.push(hash)
 		if are_arrays_equal(item1, target_item)
-			proof.concat(0, Array.from(item2))
+			proof = proof.concat(0, Array.from(item2))
 			target_item	= hash
 		else if are_arrays_equal(item2, target_item)
-			proof.concat(1, Array.from(item1))
+			proof = proof.concat(1, Array.from(item1))
 			target_item	= hash
 
 	get_proof(tree, target_item, hash_function, proof)
