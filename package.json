@@ -23,7 +23,7 @@
 		"test" : "tape tests/**/*.js"
 	},
 	"devDependencies" : {
-		"build-gc" : "^0.1.1",
-		"tape"     : "^4.8.0"
+		"build-gc" : "^0.2.0",
+		"tape"     : "^4.9.1"
 	}
 }
