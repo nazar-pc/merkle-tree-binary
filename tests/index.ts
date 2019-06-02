@@ -5,7 +5,7 @@
  */
 import {createHash, randomBytes} from "crypto";
 import * as test from "tape";
-import {checkProof, getProof, getRoot} from "..";
+import {checkProof, getProof, getRoot} from "../src";
 
 function sha1(data: Uint8Array): Uint8Array {
     return createHash('sha1').update(data).digest();
