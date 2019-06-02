@@ -1,29 +1,40 @@
 {
-	"name"            : "merkle-tree-binary",
-	"description"     : "Set of functions for creating Merkle Tree, proofs and verifying proofs using binary data",
-	"keywords"        : [
+	"name": "merkle-tree-binary",
+	"description": "Set of functions for creating Merkle Tree, proofs and verifying proofs using binary data",
+	"keywords": [
 		"merkle",
 		"tree",
 		"root",
 		"proof"
 	],
-	"version"         : "0.1.0",
-	"homepage"        : "https://github.com/nazar-pc/merkle-tree-binary",
-	"author"          : "Nazar Mokrynskyi <nazar@mokrynskyi.com>",
-	"repository"      : {
-		"type" : "git",
-		"url"  : "git://github.com/nazar-pc/merkle-tree-binary.git"
+	"version": "1.0.0",
+	"homepage": "https://github.com/nazar-pc/merkle-tree-binary",
+	"author": "Nazar Mokrynskyi <nazar@mokrynskyi.com>",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/nazar-pc/merkle-tree-binary.git"
 	},
-	"license"         : "0BSD",
-	"main"            : "src/index.js",
-	"files"           : [
+	"license": "0BSD",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
 		"src"
 	],
-	"scripts"         : {
-		"test" : "tape tests/**/*.js"
+	"scripts": {
+		"build": "npm run clean && npm run lint && npm run compile && npm run minify",
+		"clean": "rm -rf dist",
+		"compile": "tsc -b",
+		"minify": "uglifyjs --compress --mangle -- dist/index.js > dist/index.min.js",
+		"lint": "tslint --project .",
+		"test": "npm run lint && ts-node node_modules/.bin/tape tests/**/*.ts"
 	},
-	"devDependencies" : {
-		"build-gc" : "^0.2.0",
-		"tape"     : "^4.9.1"
+	"devDependencies": {
+		"@types/node": "^12.0.4",
+		"@types/tape": "^4.2.33",
+		"tape": "^4.10.2",
+		"ts-node": "^8.2.0",
+		"tslint": "^5.17.0",
+		"typescript": "^3.5.1",
+		"uglify-es": "^3.3.9"
 	}
 }

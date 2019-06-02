@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+
+    "module": "umd",
+    "target": "es2015",
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": false,
+    "declaration": true,
+    "sourceRoot": "src",
+    "baseUrl": "src",
+    "outDir": "dist",
+    "strict": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ],
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
+    ]
+  },
+  "include": [
+    "src", "test.ts"
+  ]
+}
