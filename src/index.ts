@@ -29,63 +29,93 @@ function areArraysEqual(array1: Uint8Array, array2: Uint8Array): boolean {
     return true;
 }
 
-function getRoot(items: Uint8Array[], hashFunction: IHashFunction): Uint8Array {
-    if (items.length === 1) {
-        return items[0];
+export class Tree {
+    public static checkProof(root: Uint8Array, proof: Uint8Array, targetItem: Uint8Array, hashFunction: IHashFunction): boolean {
+        if (areArraysEqual(root, targetItem) && proof.length === 0) {
+            return true;
+        }
+        const itemLength = targetItem.length;
+        if (proof.length % (itemLength + 1)) {
+            return false;
+        }
+        const proofStep = itemLength + 1;
+        const length = proof.length;
+        for (let i = 0; i < length; i += proofStep) {
+            const item = proof.subarray(i + 1, i + proofStep);
+            targetItem = hashFunction(
+                proof[i] ? concat(item, targetItem) : concat(targetItem, item),
+            );
+        }
+        return areArraysEqual(root, targetItem);
     }
-    const newItems: Uint8Array[] = [];
-    const length = items.length;
-    for (let index = 0; index < length; index += 2) {
-        const item1 = items[index];
-        const item2 = items[index + 1] || item1;
-        newItems.push(hashFunction(concat(item1, item2)));
+
+    private readonly tree: Uint8Array[][] = [];
+    private readonly items: Uint8Array[];
+
+    constructor(
+        items: Uint8Array[],
+        hashFunction: IHashFunction,
+    ) {
+        this.items = items;
+        this.buildTree(items, hashFunction);
     }
-    return getRoot(newItems, hashFunction);
-}
 
-function getProof(items: Uint8Array[], targetItem: Uint8Array, hashFunction: IHashFunction): Uint8Array {
-    return getProofInternal(items, targetItem, hashFunction);
-}
+    public getProof(targetItem: Uint8Array): Uint8Array {
+        const items = this.items;
+        const length = items.length;
+        for (let i = 0; i < length; ++i) {
+            if (areArraysEqual(items[i], targetItem)) {
+                return this.getProofFor(i);
+            }
+        }
 
-function getProofInternal(items: Uint8Array[], targetItem: Uint8Array, hashFunction: IHashFunction, proof: number[] = []): Uint8Array {
-    if (items.length === 1) {
+        throw new Error('Item not found');
+    }
+
+    public getRoot(): Uint8Array {
+        return this.tree[this.tree.length - 1][0];
+    }
+
+    private buildTree(items: Uint8Array[], hashFunction: IHashFunction): void {
+        this.tree.push(items);
+        if (items.length === 1) {
+            return;
+        }
+        const newItems: Uint8Array[] = [];
+        const length = items.length;
+        for (let index = 0; index < length; index += 2) {
+            const item1 = items[index];
+            const item2 = items[index + 1] || item1;
+            newItems.push(hashFunction(concat(item1, item2)));
+        }
+
+        this.buildTree(newItems, hashFunction);
+    }
+
+    private getProofFor(itemIndex: number): Uint8Array {
+        const proof: number[] = [];
+        const tree = this.tree;
+        const levels = tree.length - 1;
+
+        let currentLevel = 0;
+        let right = itemIndex % 2;
+        let nextStepOffset = (itemIndex - right) / 2;
+        let index = nextStepOffset;
+
+        // Last level is the root itself, hence we exclude it
+        while (currentLevel < levels) {
+            const treeLevel = tree[currentLevel];
+            // if current element is to the right - take left element, otherwise try to take right one and fallback to left if not present (unbalanced tree)
+            const otherItem = right
+                ? treeLevel[index]
+                : (treeLevel[index + 1] || treeLevel[index]);
+            proof.push(right, ...otherItem);
+            right = index % 2;
+            nextStepOffset = (index - right) / 2;
+            index = nextStepOffset;
+            ++currentLevel;
+        }
+
         return Uint8Array.from(proof);
     }
-    const tree = [];
-    const length = items.length;
-    for (let index = 0; index < length; index += 2) {
-        const item1 = items[index];
-        const item2 = items[index + 1] || item1;
-        const hash = hashFunction(concat(item1, item2));
-        tree.push(hash);
-        if (areArraysEqual(item1, targetItem)) {
-            proof = proof.concat(0, Array.from(item2));
-            targetItem = hash;
-        } else if (areArraysEqual(item2, targetItem)) {
-            proof = proof.concat(1, Array.from(item1));
-            targetItem = hash;
-        }
-    }
-    return getProofInternal(tree, targetItem, hashFunction, proof);
 }
-
-function checkProof(root: Uint8Array, proof: Uint8Array, targetItem: Uint8Array, hashFunction: IHashFunction): boolean {
-    if (areArraysEqual(root, targetItem) && proof.length === 0) {
-        return true;
-    }
-    const itemLength = targetItem.length;
-    if (proof.length % (itemLength + 1)) {
-        return false;
-    }
-    const proofStep = itemLength + 1;
-    const length = proof.length;
-    for (let i = 0; i < length; i += proofStep) {
-        const item = proof.subarray(i + 1, i + proofStep);
-        targetItem = hashFunction(
-            proof[i] ? concat(item, targetItem) : concat(targetItem, item),
-        );
-    }
-    return areArraysEqual(root, targetItem);
-}
-
-export {getRoot, getProof, checkProof};
