@@ -7,7 +7,7 @@
 		"root",
 		"proof"
 	],
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"homepage": "https://github.com/nazar-pc/merkle-tree-binary",
 	"author": "Nazar Mokrynskyi <nazar@mokrynskyi.com>",
 	"repository": {

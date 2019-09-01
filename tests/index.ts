@@ -57,3 +57,21 @@ test('merkle-tree-binary 3', (t) => {
     t.notOk(Tree.checkProof(root, proof1, item2, sha1));
     t.end();
 });
+test('merkle-tree-binary 4', (t) => {
+    const items = [];
+    for (let i = 0; i < 1000; ++i) {
+        items.push(randomBytes(20));
+    }
+    const tree = new Tree(items, sha1);
+    for (const item of items) {
+        t.ok(
+            Tree.checkProof(
+                tree.getRoot(),
+                tree.getProof(item),
+                item,
+                sha1,
+            ),
+        );
+    }
+    t.end();
+});

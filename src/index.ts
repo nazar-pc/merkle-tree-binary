@@ -99,8 +99,7 @@ export class Tree {
 
         let currentLevel = 0;
         let right = itemIndex % 2;
-        let nextStepOffset = (itemIndex - right) / 2;
-        let index = nextStepOffset;
+        let index = itemIndex - right;
 
         // Last level is the root itself, hence we exclude it
         while (currentLevel < levels) {
@@ -110,9 +109,8 @@ export class Tree {
                 ? treeLevel[index]
                 : (treeLevel[index + 1] || treeLevel[index]);
             proof.push(right, ...otherItem);
-            right = index % 2;
-            nextStepOffset = (index - right) / 2;
-            index = nextStepOffset;
+            right = (index / 2) % 2;
+            index = index / 2 - right;
             ++currentLevel;
         }
 
